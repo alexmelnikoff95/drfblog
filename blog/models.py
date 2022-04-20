@@ -18,7 +18,7 @@ class Author(models.Model):
 class Blog(models.Model):
     title = models.CharField(max_length=255, verbose_name='название блога')
     text = models.TextField(verbose_name='текст блога')
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
 
     class Meta:
         verbose_name = 'блог'
