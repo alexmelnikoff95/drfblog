@@ -16,34 +16,6 @@ class AuthorDetailView(APIView):
             return Response({'error': 'страница не найдена'})
         return Response({'author': au.data})
 
-
-class AuthorView(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    # def post(self, request):
-    #     # new = Author.objects.create(
-    #     #     first_name=request.data['first_name'],
-    #     #     last_name=request.data['last_name'])
-    #     # return Response({'author': model_to_dict(new)})
-    #     # return Response({'author': AuthorSerializers(new).data})
-    #
-    #     au = AuthorSerializers(data=request.data)
-    #
-    #     au.is_valid(raise_exception=True)
-    #     return Response(au.validated_data)
-
-    def get(self, request):
-        au = AuthorSerializers(Author.objects.all(), many=True)
-        # sr = AuthorResponseSerializers(data={'author': au.data})
-        # au.is_valid(raise_exception=True)
-        return Response({'author': au.data})
-
-    def post(self, request):
-        au = AuthorSerializers(data=request.data)
-        au.is_valid(raise_exception=True)
-        au.save()
-        return Response(au.validated_data)
-
     def put(self, request, *args, **kwargs):
         pk = kwargs.get('pk', None)
         if not pk:
@@ -71,16 +43,78 @@ class AuthorView(APIView):
         return Response({'author': 'объект удален'})
 
 
-class BlogView(APIView):
+class AuthorView(APIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    # def post(self, request):
+    #     # new = Author.objects.create(
+    #     #     first_name=request.data['first_name'],
+    #     #     last_name=request.data['last_name'])
+    #     # return Response({'author': model_to_dict(new)})
+    #     # return Response({'author': AuthorSerializers(new).data})
+    #
+    #     au = AuthorSerializers(data=request.data)
+    #
+    #     au.is_valid(raise_exception=True)
+    #     return Response(au.validated_data)
 
     def get(self, request):
-        blog_sr = BlogSerializers(Blog.objects.all(), many=True)
-        sr = BlogSerializers(data={'blog': blog_sr.data})
-        sr.is_valid(raise_exception=True)
-        return Response(data=sr.validated_data)
+        au = AuthorSerializers(Author.objects.all(), many=True)
+        return Response({'author': au.data})
 
     def post(self, request):
-        sr = BlogSerializers(data=request.data)
-        sr.is_valid(raise_exception=True)
-        sr.save()
-        return Response({'blog': sr.data})
+        au = AuthorSerializers(data=request.data)
+        au.is_valid(raise_exception=True)
+        au.save()
+        return Response(au.validated_data)
+
+
+class BlogView(APIView):
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get(self, request):
+        blog = BlogSerializers(Blog.objects.all(), many=True)
+        return Response({'blog': blog.data})
+
+    def post(self, request):
+        blog = BlogSerializers(data=request.data)
+        blog.is_valid(raise_exception=True)
+        blog.save()
+        return Response(blog.validated_data)
+
+
+class BlogDetailView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        try:
+            blog = BlogSerializers(Blog.objects.get(pk=pk))
+        except:
+            return Response({'error': 'страница не найдена'})
+        return Response({'author': blog.data})
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', None)
+        if not pk:
+            return Response({'error': 'id  не найден'})
+        try:
+            instance = Blog.objects.get(pk=pk)
+        except:
+            return Response({'error': 'страница не найдена'})
+
+        blog = BlogSerializers(data=request.data, instance=instance)
+        blog.is_valid(raise_exception=True)
+        blog.save()
+        return Response({'blog': blog.data})
+
+    def delete(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', None)
+        if not pk:
+            return Response({'error': 'id  не найден'})
+        try:
+            instance = Blog.objects.get(pk=pk)
+            instance.delete()
+        except:
+            return Response({'error': 'объект не найден'})
+
+        return Response({'blog': 'объект удален из базы данных'})
