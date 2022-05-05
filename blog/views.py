@@ -1,12 +1,14 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Author, Blog
+from .permissions import IsAdminUser, AuthorOrReadOnly
 from .serializers import BlogSerializers, AuthorSerializers, AuthorSr
 
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 
 
 class AuthorDetailView(APIView):
+    permission_classes = (AuthorOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
@@ -44,19 +46,7 @@ class AuthorDetailView(APIView):
 
 
 class AuthorView(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    # def post(self, request):
-    #     # new = Author.objects.create(
-    #     #     first_name=request.data['first_name'],
-    #     #     last_name=request.data['last_name'])
-    #     # return Response({'author': model_to_dict(new)})
-    #     # return Response({'author': AuthorSerializers(new).data})
-    #
-    #     au = AuthorSerializers(data=request.data)
-    #
-    #     au.is_valid(raise_exception=True)
-    #     return Response(au.validated_data)
+    permission_classes = (IsAdminUser,)
 
     def get(self, request):
         au = AuthorSerializers(Author.objects.all(), many=True)
@@ -70,7 +60,7 @@ class AuthorView(APIView):
 
 
 class BlogView(APIView):
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         blog = BlogSerializers(Blog.objects.all(), many=True)
@@ -84,6 +74,7 @@ class BlogView(APIView):
 
 
 class BlogDetailView(APIView):
+    permission_classes = (AuthorOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
