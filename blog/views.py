@@ -1,5 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .models import Author, Blog
 from .permissions import IsAdminUser, AuthorOrReadOnly
 from .serializers import BlogSerializers, AuthorSerializers, AuthorSr
@@ -10,7 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 class AuthorDetailView(APIView):
     permission_classes = (AuthorOrReadOnly,)
 
-    def get(self, request, *args, **kwargs):
+    @staticmethod
+    def get(request, *args, **kwargs):
         pk = kwargs.get('pk')
         try:
             au = AuthorSr(Author.objects.get(pk=pk))
@@ -18,7 +21,8 @@ class AuthorDetailView(APIView):
             return Response({'error': 'страница не найдена'})
         return Response({'author': au.data})
 
-    def put(self, request, *args, **kwargs):
+    @staticmethod
+    def put(request, *args, **kwargs):
         pk = kwargs.get('pk', None)
         if not pk:
             return Response({'error': 'ошибка нет id '})
@@ -33,7 +37,8 @@ class AuthorDetailView(APIView):
         serializer.save()
         return Response({'author': serializer.data})
 
-    def delete(self, request, *args, **kwargs):
+    @staticmethod
+    def delete(request, *args, **kwargs):
         pk = kwargs.get('pk', None)
         if not pk:
             return Response({'error': 'ошибка нет id '})
@@ -48,11 +53,13 @@ class AuthorDetailView(APIView):
 class AuthorView(APIView):
     permission_classes = (IsAdminUser,)
 
-    def get(self, request):
+    @staticmethod
+    def get(request):
         au = AuthorSerializers(Author.objects.all(), many=True)
         return Response({'author': au.data})
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         au = AuthorSerializers(data=request.data)
         au.is_valid(raise_exception=True)
         au.save()
@@ -60,13 +67,17 @@ class AuthorView(APIView):
 
 
 class BlogView(APIView):
-    permission_classes = (IsAuthenticated,)
+    authentication_classes = (JWTAuthentication,)
 
-    def get(self, request):
+    # permission_classes = (IsAuthenticated,)
+
+    @staticmethod
+    def get(request):
         blog = BlogSerializers(Blog.objects.all(), many=True)
         return Response({'blog': blog.data})
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         blog = BlogSerializers(data=request.data)
         blog.is_valid(raise_exception=True)
         blog.save()
@@ -76,7 +87,8 @@ class BlogView(APIView):
 class BlogDetailView(APIView):
     permission_classes = (AuthorOrReadOnly,)
 
-    def get(self, request, *args, **kwargs):
+    @staticmethod
+    def get(request, *args, **kwargs):
         pk = kwargs.get('pk')
         try:
             blog = BlogSerializers(Blog.objects.get(pk=pk))
@@ -84,7 +96,8 @@ class BlogDetailView(APIView):
             return Response({'error': 'страница не найдена'})
         return Response({'author': blog.data})
 
-    def put(self, request, *args, **kwargs):
+    @staticmethod
+    def put(request, *args, **kwargs):
         pk = kwargs.get('pk', None)
         if not pk:
             return Response({'error': 'id  не найден'})
@@ -96,9 +109,11 @@ class BlogDetailView(APIView):
         blog = BlogSerializers(data=request.data, instance=instance)
         blog.is_valid(raise_exception=True)
         blog.save()
+
         return Response({'blog': blog.data})
 
-    def delete(self, request, *args, **kwargs):
+    @staticmethod
+    def delete(request, *args, **kwargs):
         pk = kwargs.get('pk', None)
         if not pk:
             return Response({'error': 'id  не найден'})
