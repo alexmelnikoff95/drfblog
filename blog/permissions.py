@@ -29,7 +29,8 @@ class AuthorOrReadOnly(permissions.BasePermission):
         return False
 
 
-class IsClient(permissions.IsAuthenticated):
+class IsAuth(permissions.IsAuthenticated):
+
     def has_permission(self, request, view):
         is_authenticated = super().has_permission(request, view)
         return is_authenticated
