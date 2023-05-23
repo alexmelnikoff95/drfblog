@@ -33,5 +33,3 @@ services:
       - db_data:/var/lib/sqlite
     ports:
       - "3306:3306"
-    env_file:
-      - .env
