@@ -1,12 +1,21 @@
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
-from blog.models import Author, Blog
+from blog.models import Author, Blog, AirBlog
 
 
-class AuthorSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Author
-        fields = '__all__'
+class BlogSerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=255)
+    text = serializers.CharField()
+
+    def create(self, validated_data):
+        return Blog.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.text = validated_data.get('text', instance.text)
+        instance.save()
+        return instance
 
 
 class AuthorSr(serializers.Serializer):
@@ -23,7 +32,15 @@ class AuthorSr(serializers.Serializer):
         return instance
 
 
-class BlogSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Blog
-        exclude = ('author',)
+class AirBlogSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    text = serializers.CharField()
+
+    def create(self, validated_data):
+        return AirBlog.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.text = validated_data.get('text', instance.text)
+        instance.save()
+        return instance

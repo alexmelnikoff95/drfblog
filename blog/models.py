@@ -5,7 +5,7 @@ from django.db import models
 class Author(models.Model):
     first_name = models.CharField(max_length=255, verbose_name='имя')
     last_name = models.CharField(max_length=255, verbose_name='фамилия')
-    user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE, null=True)
 
     class Meta:
         verbose_name = 'автор'
@@ -23,6 +23,18 @@ class Blog(models.Model):
     class Meta:
         verbose_name = 'блог'
         verbose_name_plural = 'блоги'
+
+    def __str__(self):
+        return self.title
+
+
+class AirBlog(models.Model):
+    title = models.CharField(max_length=255)
+    text = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = 'Авиа блог'
+        verbose_name_plural = 'Авиа Блоги'
 
     def __str__(self):
         return self.title
