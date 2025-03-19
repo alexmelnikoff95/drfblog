@@ -17,4 +17,5 @@ application = get_wsgi_application()
 
 
 def greet():
+    qwe
     print("Привет из ветки master!")
