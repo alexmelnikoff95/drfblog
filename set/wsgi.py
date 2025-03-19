@@ -17,5 +17,5 @@ application = get_wsgi_application()
 
 
 def greet():
-    no master2
+    no master1
     print("Привет из ветки master!")
