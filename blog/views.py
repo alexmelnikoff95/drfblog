@@ -79,8 +79,7 @@ class BlogView(APIView):
 
 class BlogDetailView(APIView):
     permission_classes = (AuthorOrReadOnly,)
-
-    @staticmethod
+    123
     def get(request, *args, **kwargs):
         pk = kwargs.get('pk')
         try:
