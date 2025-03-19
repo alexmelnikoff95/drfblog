@@ -17,4 +17,4 @@ application = get_wsgi_application()
 
 
 def greet():
-    print("Привет из ветки вфвыфф!")
+    print("Привет из ветки master!")
