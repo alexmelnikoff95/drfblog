@@ -17,5 +17,5 @@ application = get_wsgi_application()
 
 
 def greet():
-    ddd
+    nomaster
     print("Привет из ветки no bp master!")
